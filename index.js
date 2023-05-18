@@ -34,33 +34,82 @@ async function run() {
         const allToysCollection = database.collection("allToysCollection");
 
 
-
-        app.get('/allToys', async (req, res) => {
-
+        app.get('/myToys', async (req, res) => {
             let query = {}
+            const sorting = req.query.srt
+
             if (req?.query?.email) {
                 query = { seller_email: req.query.email }
             }
 
-            if (query) {
-                const result = await allToysCollection.find(query).toArray()
+
+            if (sorting) {
+                // console.log(query, result)
+
+                const result = await allToysCollection.find(query).sort({ price: sorting }).toArray()
                 res.send(result)
-                console.log(query, result)
             }
             else {
-                const result = await allToysCollection.find().toArray()
+
+                const result = await allToysCollection.find(query).toArray()
                 res.send(result)
             }
+            console.log(sorting)
+            console.log(query)
+
 
         })
 
+
+        app.get('/allToys/:text', async (req, res) => {
+            const currentPage = parseInt(req?.query?.page) || 0
+            const itemsPerPage = parseInt(req?.query?.limit) || 5 
+            const skip = currentPage * itemsPerPage
+          
+            console.log(itemsPerPage)
+            const searchText = req?.params?.text
+          
+
+            if (searchText == '1') {
+                const result = await allToysCollection.find().skip(skip).limit(itemsPerPage).toArray()
+                res.send(result)
+
+            }
+            else {
+                const result = await allToysCollection.find({ toy_name: searchText }).toArray()
+                res.send(result)
+            }
+
+
+            // else if (searchText === '1') {
+            //     const result = await allToysCollection.find().toArray()
+            //     console.log('1', result);
+            //     res.send(result)
+            // }
+            // else {
+            // const query = { toy_name : searchText }
+
+
+            // }
+
+        })
+
+
+
+        app.get('/allToysImg', async (req, res) => {
+            const result = await allToysCollection.find().toArray()
+
+            res.send(result)
+
+
+        })
 
         app.get('/singleToys/:id', async (req, res) => {
             const id = req.params.id
             const filter = { _id: new ObjectId(id) }
             const result = await allToysCollection.findOne(filter)
             res.send(result)
-
+            // console.log(result)
 
         })
 
@@ -72,21 +121,25 @@ async function run() {
             res.send(result)
         })
 
+
+
         app.patch('/update/:id', async (req, res) => {
             const updateDetails = req.body
-            console.log(updateDetails)
+            // console.log(updateDetails)
             const id = req.params.id
             const filter = { _id: new ObjectId(id) }
             const updated = {
                 $set: {
                     price: updateDetails.price,
                     description: updateDetails.description,
-                    available_quantity : updateDetails.available_quantity
+                    available_quantity: updateDetails.available_quantity
                 }
             }
-            const result = await allToysCollection.updateOne(filter , updated)
+            const result = await allToysCollection.updateOne(filter, updated)
             res.send(result)
         })
+
+
 
         app.delete('/remove/:id', async (req, res) => {
             const id = req.params.id
@@ -97,6 +150,14 @@ async function run() {
 
 
 
+
+
+        // pagination 
+
+        app.get('/toysQuantity', async (req, res) => {
+            const result = await allToysCollection.estimatedDocumentCount()
+            res.send({ toysQuantity: result })
+        })
 
 
         // Send a ping to confirm a successful connection
