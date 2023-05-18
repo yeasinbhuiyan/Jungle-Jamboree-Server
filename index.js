@@ -13,7 +13,7 @@ app.use(cors())
 app.use(express.json())
 
 
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.9xgdj4e.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -41,10 +41,11 @@ async function run() {
             if (req?.query?.email) {
                 query = { seller_email: req.query.email }
             }
+
             if (query) {
                 const result = await allToysCollection.find(query).toArray()
                 res.send(result)
-                console.log(query,result)
+                console.log(query, result)
             }
             else {
                 const result = await allToysCollection.find().toArray()
@@ -54,12 +55,46 @@ async function run() {
         })
 
 
+        app.get('/singleToys/:id', async (req, res) => {
+            const id = req.params.id
+            const filter = { _id: new ObjectId(id) }
+            const result = await allToysCollection.findOne(filter)
+            res.send(result)
+
+
+        })
+
+
         app.post('/addToys', async (req, res) => {
             const body = req.body
-            //  console.log(body)
+
             const result = await allToysCollection.insertOne(body)
             res.send(result)
         })
+
+        app.patch('/update/:id', async (req, res) => {
+            const updateDetails = req.body
+            console.log(updateDetails)
+            const id = req.params.id
+            const filter = { _id: new ObjectId(id) }
+            const updated = {
+                $set: {
+                    price: updateDetails.price,
+                    description: updateDetails.description,
+                    available_quantity : updateDetails.available_quantity
+                }
+            }
+            const result = await allToysCollection.updateOne(filter , updated)
+            res.send(result)
+        })
+
+        app.delete('/remove/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await allToysCollection.deleteOne(query)
+            res.send(result)
+        })
+
 
 
 
