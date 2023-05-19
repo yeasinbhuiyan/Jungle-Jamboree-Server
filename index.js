@@ -81,16 +81,7 @@ async function run() {
             }
 
 
-            // else if (searchText === '1') {
-            //     const result = await allToysCollection.find().toArray()
-            //     console.log('1', result);
-            //     res.send(result)
-            // }
-            // else {
-            // const query = { toy_name : searchText }
-
-
-            // }
+        
 
         })
 
