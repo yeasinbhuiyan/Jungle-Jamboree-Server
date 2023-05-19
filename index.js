@@ -71,6 +71,7 @@ async function run() {
           
 
             if (searchText == '1') {
+               console.log('this is array')
                 const result = await allToysCollection.find().skip(skip).limit(itemsPerPage).toArray()
                 res.send(result)
 
@@ -88,6 +89,16 @@ async function run() {
 
 
         app.get('/allToysImg', async (req, res) => {
+            const result = await allToysCollection.find().toArray()
+
+            res.send(result)
+
+
+        })
+
+
+
+        app.get('/allToysTabs', async (req, res) => {
             const result = await allToysCollection.find().toArray()
 
             res.send(result)
