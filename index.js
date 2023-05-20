@@ -54,8 +54,7 @@ async function run() {
                 const result = await allToysCollection.find(query).toArray()
                 res.send(result)
             }
-            console.log(sorting)
-            console.log(query)
+        
 
 
         })
@@ -111,7 +110,7 @@ async function run() {
             const filter = { _id: new ObjectId(id) }
             const result = await allToysCollection.findOne(filter)
             res.send(result)
-            // console.log(result)
+        
 
         })
 
@@ -127,7 +126,7 @@ async function run() {
 
         app.patch('/update/:id', async (req, res) => {
             const updateDetails = req.body
-            // console.log(updateDetails)
+            
             const id = req.params.id
             const filter = { _id: new ObjectId(id) }
             const updated = {
