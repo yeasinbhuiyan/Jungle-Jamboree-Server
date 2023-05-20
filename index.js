@@ -44,7 +44,7 @@ async function run() {
 
 
             if (sorting) {
-                // console.log(query, result)
+             
 
                 const result = await allToysCollection.find(query).sort({ price: sorting }).toArray()
                 res.send(result)
