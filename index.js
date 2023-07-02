@@ -9,7 +9,13 @@ const port = process.env.PORT || 5000
 
 // middleWear
 
-app.use(cors())
+
+const corsOptions = {
+    origin: '*',
+    credentials: true,
+    optionSuccessStatus: 200,
+}
+app.use(cors(corsOptions))
 app.use(express.json())
 
 
@@ -81,8 +87,6 @@ async function run() {
             }
 
 
-        
-
         })
 
 
@@ -92,14 +96,12 @@ async function run() {
 
             res.send(result)
 
-
         })
 
 
 
         app.get('/allToysTabs', async (req, res) => {
             const result = await allToysCollection.find().toArray()
-
             res.send(result)
 
 
@@ -111,7 +113,6 @@ async function run() {
             const result = await allToysCollection.findOne(filter)
             res.send(result)
         
-
         })
 
 
@@ -148,8 +149,6 @@ async function run() {
             const result = await allToysCollection.deleteOne(query)
             res.send(result)
         })
-
-
 
 
 
